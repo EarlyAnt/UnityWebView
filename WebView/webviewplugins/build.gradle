@@ -1,0 +1,79 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation files('libs\\classes.jar')
+    //implementation fileTree(dir: 'D:\\Laboratory\\WebView\\webviewplugins\\libs', include: ['*.aar', '*.jar'], exclude: [])
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    compile files('libs/classes.jar')
+}
+
+/*
+def _BASENAME = "TestJar";
+def _DestinationPath = "build"; //生成jar包的位置
+
+task deleteBuild(type:Delete){
+    delete _DestinationPath + _BASENAME + ".jar"
+}
+
+task makeJar(type:Jar){
+    from fileTree(dir:'src/main',includes:['assets/**']) //将assets目录打入jar包
+    from('build/intermediates/classes/release/jinke/com/mylibrary') //需要打包的class文件
+    //打包到jar后的目录结构
+    into('jinke/com/mylibrary/')
+    //去掉不需要打包的目录和文件
+    exclude('BuildConfig.class', 'R.class')
+    //去掉R$开头的文件
+    exclude { it.name.startsWith('R$'); }
+    baseName = _BASENAME
+    destinationDir = file(_DestinationPath)
+}
+makeJar.dependsOn(deleteBuild, build)
+*/
+
+task deleteOldJar(type: Delete) {
+    delete 'release/AndroidPlugin.jar'
+}
+
+//task to export contents as jar
+task exportJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('release/')
+    include('classes.jar')
+    ///Rename the jar
+    rename('classes.jar', 'AndroidPlugin.jar')
+}
+
+exportJar.dependsOn(deleteOldJar, build)

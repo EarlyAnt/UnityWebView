@@ -1,0 +1,3 @@
+include ':webviewplugins'
+include ':app'
+rootProject.name = "WebView"
