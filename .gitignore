@@ -1,2 +1,5 @@
 /Unity/Library
 /Unity/obj
+/Unity/Temp
+/Unity/.vs/Unity/v16/*.suo
+/Unity/*.sln

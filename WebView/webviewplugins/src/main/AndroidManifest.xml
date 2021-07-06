@@ -12,7 +12,7 @@
     <application
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
         android:label="@string/app_name">
-        <activity android:name="com.example.webviewplugins.WebViewPluginsActivity" > <!-- 设置自己的Activity  包名+ 类名-->
+        <activity android:name="com.example.webviewplugins.MainActivity" > <!-- 设置自己的Activity  包名+ 类名-->
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" /> <!-- 设置该Activity 为主Activity-->

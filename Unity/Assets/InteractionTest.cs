@@ -23,11 +23,11 @@ public class InteractionTest : MonoBehaviour
         try
         {
             //获取自己定义的Activity的实例
-            //this.androidJavaClass = new AndroidJavaClass("com.example.webviewplugins.WebViewPluginsActivity");//包名+class名            
-            //this.androidJavaObject = androidJavaClass.GetStatic<AndroidJavaObject>("MyActivity");// 拿到MyActivity变量
+            this.androidJavaClass = new AndroidJavaClass("com.example.webviewplugins.MainActivity");//包名+class名            
+            this.androidJavaObject = androidJavaClass.GetStatic<AndroidJavaObject>("MyActivity");// 拿到MyActivity变量
 
-            this.androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");//包名+class名
-            this.androidJavaObject = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");// 拿到MyActivity变量
+            //this.androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");//包名+class名
+            //this.androidJavaObject = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");// 拿到MyActivity变量
 
             this.messageBox.text = "scene loaded";
         }
