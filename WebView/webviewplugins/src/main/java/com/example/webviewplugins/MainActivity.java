@@ -14,16 +14,31 @@ public class MainActivity extends UnityPlayerActivity {
     }
 
     public void UnityCallAndroid() {
-        Toast.makeText(this, "page1: unity call android success", Toast.LENGTH_LONG).show();
-        AndroidCallUnity();
+        Toast.makeText(this, "page1: unity call android", Toast.LENGTH_LONG).show();
 
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, NextActivity.class);
         startActivity(intent);
+
+        AndroidCallUnity("That all will be ok!");
     }
 
-    public void AndroidCallUnity() {
-        UnityPlayer.UnitySendMessage("Sentry", "AndroidCallback", "That all will be ok!");
-        Toast.makeText(this, "page1: android call unity success", Toast.LENGTH_LONG).show();
+    public void AndroidCallUnity(final String tip) {
+        UnityPlayer.UnitySendMessage("Sentry", "AndroidCallback", tip);
+        Toast.makeText(this, "page1: android call unity", Toast.LENGTH_LONG).show();
+    }
+
+    public void OpenUrl(final String url) {
+        Toast.makeText(this, "page1: open web page", Toast.LENGTH_LONG).show();
+
+        if (url != null && !url.isEmpty() && (url.startsWith("http://") || url.startsWith("https://"))) {
+            NextActivity.Url = url;
+        }
+
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, NextActivity.class);
+        startActivity(intent);
+
+        AndroidCallUnity(url);
     }
 }

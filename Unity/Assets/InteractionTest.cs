@@ -7,6 +7,8 @@ public class InteractionTest : MonoBehaviour
     [SerializeField]
     private Text messageBox;
     [SerializeField]
+    private Text urlBox;
+    [SerializeField]
     private Transform rotateGameObject;
     [SerializeField, Range(0f, 5f)]
     private float speedX = 0.1f;
@@ -52,7 +54,27 @@ public class InteractionTest : MonoBehaviour
                 this.messageBox.text = "androidJavaObject is null";
                 return;
             }
+
             this.androidJavaObject.Call("UnityCallAndroid");
+        }
+        catch (Exception ex)
+        {
+            this.messageBox.text = string.Format("<><InteractionTest.CallAndroidMethod>Error: {0}", ex.Message);
+        }
+    }
+
+    public void OpenUrl()
+    {
+        try
+        {
+            //调用WebViewPluginsActivity的UnityCall方法
+            if (this.androidJavaObject == null)
+            {
+                this.messageBox.text = "androidJavaObject is null";
+                return;
+            }
+
+            this.androidJavaObject.Call("OpenUrl", this.urlBox.text);
         }
         catch (Exception ex)
         {

@@ -22,6 +22,8 @@ import com.unity3d.player.UnityPlayer;
 import static android.view.KeyEvent.KEYCODE_BACK;
 
 public class NextActivity extends Activity {
+    public static String Url = "https://www.hao123.com/rili/";
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -85,7 +87,7 @@ public class NextActivity extends Activity {
     private WebView webView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Toast.makeText(this, "web view page entered", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "web view page entered\n" + Url, Toast.LENGTH_LONG).show();
 
         super.onCreate(savedInstanceState);
         //全屏
@@ -117,7 +119,7 @@ public class NextActivity extends Activity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
-        webView.loadUrl("https://www.hao123.com/rili/");
+        webView.loadUrl(Url);
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -142,7 +144,7 @@ public class NextActivity extends Activity {
 
     }
 
-    public void OpenUrl(String url) {
+    /*public void OpenUrl(String url) {
         Toast.makeText(this, "page2: try to open url", Toast.LENGTH_LONG).show();
         webView.loadUrl(url);
         webView.setWebViewClient(new WebViewClient(){
@@ -157,5 +159,5 @@ public class NextActivity extends Activity {
 
         UnityPlayer.UnitySendMessage("Sentry", "AndroidCallback", "web page opened");
         Toast.makeText(this, "page2: web page opened", Toast.LENGTH_LONG).show();
-    }
+    }*/
 }
