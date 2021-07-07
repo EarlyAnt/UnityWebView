@@ -28,12 +28,10 @@ public class MainActivity extends UnityPlayerActivity {
         Toast.makeText(this, "page1: android call unity", Toast.LENGTH_LONG).show();
     }
 
-    public void OpenUrl(final String url) {
+    public void OpenUrl(final String url, final String jsFunction) {
         Toast.makeText(this, "page1: open web page", Toast.LENGTH_LONG).show();
-
-        if (url != null && !url.isEmpty() && (url.startsWith("http://") || url.startsWith("https://"))) {
-            NextActivity.Url = url;
-        }
+        NextActivity.Url = url;
+        NextActivity.JsFunction = jsFunction;
 
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, NextActivity.class);

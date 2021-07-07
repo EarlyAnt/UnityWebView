@@ -7,7 +7,9 @@ public class InteractionTest : MonoBehaviour
     [SerializeField]
     private Text messageBox;
     [SerializeField]
-    private Text urlBox;
+    private InputField urlBox;
+    [SerializeField]
+    private InputField jsFunctionBox;
     [SerializeField]
     private Transform rotateGameObject;
     [SerializeField, Range(0f, 5f)]
@@ -32,6 +34,10 @@ public class InteractionTest : MonoBehaviour
             this.androidJavaObject = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");// 拿到MyActivity变量
 
             this.messageBox.text = "scene loaded";
+
+            this.urlBox.text = "http://192.168.2.151:80/index.htm";
+            this.jsFunctionBox.text = "javascript:callWithoutArgs()";
+            //this.jsFunctionBox.text = "toast('unity通过安卓原生webview调用网页中的js方法，成功！')";
         }
         catch (Exception ex)
         {
@@ -74,7 +80,7 @@ public class InteractionTest : MonoBehaviour
                 return;
             }
 
-            this.androidJavaObject.Call("OpenUrl", this.urlBox.text);
+            this.androidJavaObject.Call("OpenUrl", this.urlBox.text, this.jsFunctionBox.text);
         }
         catch (Exception ex)
         {

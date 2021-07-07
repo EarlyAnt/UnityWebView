@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -22,7 +24,9 @@ import com.unity3d.player.UnityPlayer;
 import static android.view.KeyEvent.KEYCODE_BACK;
 
 public class NextActivity extends Activity {
+    private static String BaseUrl = "https://www.zhihu.com/";
     public static String Url = "https://www.hao123.com/rili/";
+    public static String JsFunction = "";
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -87,8 +91,6 @@ public class NextActivity extends Activity {
     private WebView webView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Toast.makeText(this, "web view page entered\n" + Url, Toast.LENGTH_LONG).show();
-
         super.onCreate(savedInstanceState);
         //全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -119,7 +121,17 @@ public class NextActivity extends Activity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
-        webView.loadUrl(Url);
+
+        String targetUrl = "";
+        if (Url != null && !Url.isEmpty() && (Url.startsWith("http://") || Url.startsWith("https://"))) {
+            targetUrl = Url;
+        }
+        else {
+            targetUrl = BaseUrl;
+        }
+
+        Toast.makeText(this, "open web page: \n" + Url, Toast.LENGTH_LONG).show();
+        webView.loadUrl(targetUrl);
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -127,6 +139,16 @@ public class NextActivity extends Activity {
                 view.loadUrl(url);
                 //返回true
                 return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                System.out.print("call js function: \n" + JsFunction + ", url: " + url);
+                //无参数调用
+                webView.loadUrl(JsFunction);
+                /*//传递参数调用
+                webView.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')");
+                super.onPageFinished(view, url);*/
             }
         });
     }
@@ -160,4 +182,9 @@ public class NextActivity extends Activity {
         UnityPlayer.UnitySendMessage("Sentry", "AndroidCallback", "web page opened");
         Toast.makeText(this, "page2: web page opened", Toast.LENGTH_LONG).show();
     }*/
+
+    @JavascriptInterface
+    public void toast(String toast){
+        Toast.makeText(NextActivity.this, toast, Toast.LENGTH_SHORT).show();
+    }
 }
