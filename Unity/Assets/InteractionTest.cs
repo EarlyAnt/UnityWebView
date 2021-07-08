@@ -35,7 +35,7 @@ public class InteractionTest : MonoBehaviour
 
             this.messageBox.text = "scene loaded";
 
-            this.urlBox.text = "http://192.168.2.151:80/index.htm";
+            this.urlBox.text = "http://192.168.0.106:80/index.htm";
             this.jsFunctionBox.text = "javascript:callWithoutArgs()";
             //this.jsFunctionBox.text = "toast('unity通过安卓原生webview调用网页中的js方法，成功！')";
         }
