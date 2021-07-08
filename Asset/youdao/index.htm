@@ -16,7 +16,7 @@
   <script type="text/javascript">
     function callWithoutArgs() {
       document.getElementById("content").innerHTML +=
-                 "<br\>java调用了js函数，无参";
+                 "<br\>java or button 调用了js函数，无参, random number: " + Math.floor(Math.random()*100);
     }
 
     function callWithArgs(data){
@@ -25,6 +25,11 @@
       document.getElementById("content").innerHTML +=
                  ("<br\>"+data);
     }
+
+    function rename() {
+     document.getElementById("content").innerHTML += "<br\>早起的蚂蚁123: " + Math.floor(Math.random()*100);
+     //document.getElementById("btnTest1").onclick();
+	}
  </script>
  </head>
  <body>
@@ -110,8 +115,9 @@
     <li><a href="https://recite.youdao.com/?vendor=chanpindaohang">背单词</a></li>
     <li><a href="https://smart.youdao.com/">学习硬件</a></li>
     <li><a href="http://dict.youdao.com/?keyfrom=dict2.index">词典</a></li>
-    <li><input type="button" value="测试1" onclick="callWithoutArgs()" /></li>
-    <li><input type="button" value="测试2" onclick="callWithArgs('That all will be ok !!!')" /></li>
+    <li><input id='btnTest1' type="button" value="测试1" onclick="callWithoutArgs()" /></li>
+    <li><input id='btnTest2' type="button" value="测试2" onclick="callWithArgs('That all will be ok !!!')" /></li>
+    <li><input id='btnTest3' type="button" value="测试3" onclick="rename()" /></li>
    </ul>
   </div>
   <div id='content'>测试结果区域</div><br />
