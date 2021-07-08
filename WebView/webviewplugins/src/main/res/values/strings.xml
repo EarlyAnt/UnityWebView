@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WebViewPlugins</string>
+    <string name="button_text">Call Js</string>
 </resources>

@@ -15,6 +15,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -28,75 +29,30 @@ public class NextActivity extends Activity {
     public static String Url = "https://www.hao123.com/rili/";
     public static String JsFunction = "";
 
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
     private static final boolean AUTO_HIDE = true;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
     private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
 
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-    /*private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };*/
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            return false;
-        }
-    };
     private WebView webView;
+    private Button button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_next);
+
+        button = (Button)findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenUrl();
+            }
+        });
 
         webView = (WebView) findViewById(R.id.webview);
 
@@ -130,7 +86,7 @@ public class NextActivity extends Activity {
             targetUrl = BaseUrl;
         }
 
-        Toast.makeText(this, "open web page: \n" + Url, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "onCreate: open web page: \n" + Url, Toast.LENGTH_LONG).show();
         webView.loadUrl(targetUrl);
         webView.setWebViewClient(new WebViewClient(){
             @Override
@@ -143,7 +99,7 @@ public class NextActivity extends Activity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                System.out.print("call js function: \n" + JsFunction + ", url: " + url);
+                System.out.print("onCreate: call js function: \n" + JsFunction + ", url: " + url);
                 //无参数调用
                 webView.loadUrl(JsFunction);
                 /*//传递参数调用
@@ -157,6 +113,7 @@ public class NextActivity extends Activity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
     }
+
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KEYCODE_BACK) && webView.canGoBack()) {
             webView.goBack();
@@ -166,9 +123,16 @@ public class NextActivity extends Activity {
 
     }
 
-    /*public void OpenUrl(String url) {
-        Toast.makeText(this, "page2: try to open url", Toast.LENGTH_LONG).show();
-        webView.loadUrl(url);
+    public void OpenUrl() {
+        Toast.makeText(this, "OpenUrl: call js function: \n" + JsFunction + ", url: " + Url, Toast.LENGTH_LONG).show();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(JsFunction, null);
+        } else {
+            webView.loadUrl(JsFunction);
+        }
+
+        /*Toast.makeText(this, "OpenUrl: open web page: \n" + Url, Toast.LENGTH_LONG).show();
+        webView.loadUrl(Url);
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -177,11 +141,18 @@ public class NextActivity extends Activity {
                 //返回true
                 return true;
             }
-        });
 
-        UnityPlayer.UnitySendMessage("Sentry", "AndroidCallback", "web page opened");
-        Toast.makeText(this, "page2: web page opened", Toast.LENGTH_LONG).show();
-    }*/
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                System.out.print("OpenUrl: call js function: \n" + JsFunction + ", url: " + url);
+                //无参数调用
+                webView.loadUrl(JsFunction);
+                //传递参数调用
+                webView.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')");
+                super.onPageFinished(view, url);
+            }
+        });*/
+    }
 
     @JavascriptInterface
     public void toast(String toast){
