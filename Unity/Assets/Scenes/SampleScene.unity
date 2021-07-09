@@ -1003,7 +1003,7 @@ GameObject:
   - component: {fileID: 1134439580}
   - component: {fileID: 1134439579}
   m_Layer: 0
-  m_Name: WebViewPlugins
+  m_Name: Sentry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1027,6 +1027,7 @@ MonoBehaviour:
   speedX: 0
   speedY: 0.5
   speedZ: 0
+  loopTimesLimit: 10
 --- !u!4 &1134439580
 Transform:
   m_ObjectHideFlags: 0
@@ -1515,7 +1516,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0.3.2
+  m_Text: 0.6.2
 --- !u!222 &1660307018
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -1,30 +1,24 @@
 package com.example.webviewplugins;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
-
-import com.unity3d.player.UnityPlayer;
-
 import static android.view.KeyEvent.KEYCODE_BACK;
 
 public class NextActivity extends Activity {
+    public static NextActivity Instance = null;
     private static String BaseUrl = "https://www.zhihu.com/";
     public static String Url = "https://www.hao123.com/rili/";
     public static String JsFunction = "";
@@ -35,22 +29,24 @@ public class NextActivity extends Activity {
 
     private WebView webView;
     private Button button;
+    private Handler timerHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        Instance = this;
 
+        super.onCreate(savedInstanceState);
         //全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_next);
 
-        button = (Button)findViewById(R.id.button);
+        button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OpenUrl();
+                evaluateJavaScript();
             }
         });
 
@@ -81,14 +77,13 @@ public class NextActivity extends Activity {
         String targetUrl = "";
         if (Url != null && !Url.isEmpty() && (Url.startsWith("http://") || Url.startsWith("https://"))) {
             targetUrl = Url;
-        }
-        else {
+        } else {
             targetUrl = BaseUrl;
         }
 
         Toast.makeText(this, "onCreate: open web page: \n" + Url, Toast.LENGTH_LONG).show();
         webView.loadUrl(targetUrl);
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 //使用WebView加载显示url
@@ -99,12 +94,14 @@ public class NextActivity extends Activity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                System.out.print("onCreate: call js function: \n" + JsFunction + ", url: " + url);
+                System.out.println(String.format("onCreate: call js function: %s\nurl: %s", JsFunction, url));
                 //无参数调用
                 webView.loadUrl(JsFunction);
                 /*//传递参数调用
                 webView.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')");
                 super.onPageFinished(view, url);*/
+
+                UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
             }
         });
     }
@@ -120,42 +117,25 @@ public class NextActivity extends Activity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
-
     }
 
-    public void OpenUrl() {
-        Toast.makeText(this, "OpenUrl: call js function: \n" + JsFunction + ", url: " + Url, Toast.LENGTH_LONG).show();
+    public void evaluateJavaScript() {
+        System.out.println(String.format("evaluateJavaScript: call js function: %s\nurl: %s", JsFunction, Url));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             webView.evaluateJavascript(JsFunction, null);
         } else {
             webView.loadUrl(JsFunction);
         }
 
-        /*Toast.makeText(this, "OpenUrl: open web page: \n" + Url, Toast.LENGTH_LONG).show();
-        webView.loadUrl(Url);
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //使用WebView加载显示url
-                view.loadUrl(url);
-                //返回true
-                return true;
+        this.timerHandler.postDelayed(new Runnable() {
+            public void run() {
+                UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
             }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                System.out.print("OpenUrl: call js function: \n" + JsFunction + ", url: " + url);
-                //无参数调用
-                webView.loadUrl(JsFunction);
-                //传递参数调用
-                webView.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')");
-                super.onPageFinished(view, url);
-            }
-        });*/
+        }, 1000);
     }
 
     @JavascriptInterface
-    public void toast(String toast){
+    public void toast(String toast) {
         Toast.makeText(NextActivity.this, toast, Toast.LENGTH_SHORT).show();
     }
 }
