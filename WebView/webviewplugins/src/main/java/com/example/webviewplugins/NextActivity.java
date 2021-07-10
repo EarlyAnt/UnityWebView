@@ -107,13 +107,25 @@ public class NextActivity extends Activity {
     }
 
     @Override
+    protected void onDestroy() {
+        if (webView != null) {
+            webView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KEYCODE_BACK) && webView.canGoBack()) {
+        /*if (keyCode == KEYCODE_BACK && webView.canGoBack()) {
             webView.goBack();
+            return true;
+        }*/
+        if (keyCode == KEYCODE_BACK) {
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
