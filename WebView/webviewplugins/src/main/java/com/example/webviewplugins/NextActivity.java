@@ -21,14 +21,16 @@ public class NextActivity extends Activity {
     public static NextActivity Instance = null;
     private static String BaseUrl = "https://www.zhihu.com/";
     public static String Url = "https://www.hao123.com/rili/";
-    public static String JsFunction = "";
+    public static String JsFunction1 = "";
+    public static String JsFunction2 = "";
 
     private static final boolean AUTO_HIDE = true;
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
     private static final int UI_ANIMATION_DELAY = 300;
 
     private WebView webView;
-    private Button button;
+    private Button btnStartInput;
+    private Button btnEndInput;
     private Handler timerHandler = new Handler();
 
     @Override
@@ -42,14 +44,21 @@ public class NextActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_next);
 
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        btnStartInput = (Button) findViewById(R.id.btnStartInput);
+        btnStartInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                evaluateJavaScript();
+                evaluateJavaScript(JsFunction1);
             }
         });
 
+        btnEndInput = (Button)findViewById(R.id.btnEndInput);
+        btnEndInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                evaluateJavaScript(JsFunction2);
+            }
+        });
         webView = (WebView) findViewById(R.id.webview);
 
         WebSettings webSettings = webView.getSettings();
@@ -94,9 +103,9 @@ public class NextActivity extends Activity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                System.out.println(String.format("onCreate: call js function: %s\nurl: %s", JsFunction, url));
+                System.out.println(String.format("onCreate: call js function: %s\nurl: %s", JsFunction1, url));
                 //无参数调用
-                webView.loadUrl(JsFunction);
+                webView.loadUrl(JsFunction1);
                 /*//传递参数调用
                 webView.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')");
                 super.onPageFinished(view, url);*/
@@ -131,12 +140,12 @@ public class NextActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
-    public void evaluateJavaScript() {
-        System.out.println(String.format("evaluateJavaScript: call js function: %s\nurl: %s", JsFunction, Url));
+    public void evaluateJavaScript(String jsFunction) {
+        System.out.println(String.format("evaluateJavaScript: call js function: %s\nurl: %s", jsFunction, Url));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            webView.evaluateJavascript(JsFunction, null);
+            webView.evaluateJavascript(jsFunction, null);
         } else {
-            webView.loadUrl(JsFunction);
+            webView.loadUrl(jsFunction);
         }
 
         this.timerHandler.postDelayed(new Runnable() {

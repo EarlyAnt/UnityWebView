@@ -9,7 +9,11 @@ public class InteractionTest : MonoBehaviour
     [SerializeField]
     private InputField urlBox;
     [SerializeField]
-    private InputField jsFunctionBox;
+    private InputField jsFunctionBox1;
+    [SerializeField]
+    private InputField jsFunctionBox2;
+    [SerializeField]
+    private WebInfo webInfo;
     [SerializeField]
     private Transform rotateGameObject;
     [SerializeField, Range(0f, 5f)]
@@ -79,11 +83,6 @@ public class InteractionTest : MonoBehaviour
     {
         try
         {
-            this.messageBox.text = "scene loaded";
-
-            this.urlBox.text = "http://192.168.0.104:80/index.htm";
-            this.jsFunctionBox.text = "javascript:callWithoutArgs()";
-            //this.jsFunctionBox.text = "toast('unity通过安卓原生webview调用网页中的js方法，成功！')";
 
             this.interactionListener = new InteractionListener();
             this.interactionListener.AddListener(this.OnReceiveMessage);
@@ -92,6 +91,11 @@ public class InteractionTest : MonoBehaviour
         {
             this.messageBox.text = string.Format("<><InteractionTest.Start>Error: {0}", ex.Message);
         }
+
+        this.urlBox.text = this.webInfo.Url;
+        this.jsFunctionBox1.text = this.webInfo.JsFunction1;
+        this.jsFunctionBox2.text = this.webInfo.JsFunction2;
+        this.messageBox.text = "scene loaded";
     }
 
     private void Update()
@@ -137,7 +141,8 @@ public class InteractionTest : MonoBehaviour
             }
 
             this.loopTimes = 0;
-            this.JavaObjectUnity.Call("OpenUrl", this.urlBox.text, this.jsFunctionBox.text, this.interactionListener);
+            this.JavaObjectUnity.Call("OpenUrl", this.urlBox.text, this.jsFunctionBox1.text, 
+                                                 this.jsFunctionBox2.text, this.interactionListener);
         }
         catch (Exception ex)
         {
@@ -206,4 +211,12 @@ public class InteractionTest : MonoBehaviour
             this.messageBox.text = string.Format("<><InteractionTest.CallAndroidMethod>Error: {0}", ex.Message);
         }
     }
+}
+
+[Serializable]
+public class WebInfo
+{
+    public string Url;
+    public string JsFunction1;
+    public string JsFunction2;
 }

@@ -14,13 +14,23 @@
     </WebView>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnStartInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp"
-        android:text="@string/button_text" />
+        android:layout_marginBottom="670dp"
+        android:text="@string/button_start_input" />
+
+    <Button
+        android:id="@+id/btnEndInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="620dp"
+        android:text="@string/button_end_input" />
 
 </RelativeLayout>

@@ -28,10 +28,11 @@ public class MainActivity extends UnityPlayerActivity {
         Toast.makeText(this, "page1: android call unity", Toast.LENGTH_LONG).show();
     }
 
-    public void OpenUrl(final String url, final String jsFunction, InteractionListener listener) {
+    public void OpenUrl(final String url, final String jsFunction1, final String jsFunction2, final InteractionListener listener) {
         Toast.makeText(this, "page1: open web page", Toast.LENGTH_LONG).show();
         NextActivity.Url = url;
-        NextActivity.JsFunction = jsFunction;
+        NextActivity.JsFunction1 = jsFunction1;
+        NextActivity.JsFunction2 = jsFunction2;
         UnityAndroidBridge.getInstance().setListener(listener);
 
         Intent intent = new Intent();

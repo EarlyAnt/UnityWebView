@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WebViewPlugins</string>
-    <string name="button_text">Call Js</string>
+    <string name="button_start_input">Start Voice Input</string>
+    <string name="button_end_input">Stop Voice Input</string>
 </resources>
