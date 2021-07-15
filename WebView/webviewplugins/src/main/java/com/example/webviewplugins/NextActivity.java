@@ -103,14 +103,8 @@ public class NextActivity extends Activity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                System.out.println(String.format("onCreate: call js function: %s\nurl: %s", JsFunction1, url));
-                //无参数调用
-                webView.loadUrl(JsFunction1);
-                /*//传递参数调用
-                webView.loadUrl("javascript:javacalljswithargs('" + "android传入到网页里的数据，有参" + "')");
-                super.onPageFinished(view, url);*/
-
-                UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
+                System.out.println("onPageFinished: ");
+                //UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
             }
         });
     }
@@ -148,11 +142,11 @@ public class NextActivity extends Activity {
             webView.loadUrl(jsFunction);
         }
 
-        this.timerHandler.postDelayed(new Runnable() {
+        /*this.timerHandler.postDelayed(new Runnable() {
             public void run() {
                 UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
             }
-        }, 1000);
+        }, 1000);*/
     }
 
     @JavascriptInterface

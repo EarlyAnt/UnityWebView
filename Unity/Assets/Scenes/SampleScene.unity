@@ -1781,7 +1781,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 1.0.3
+  m_Text: 1.0.7
 --- !u!222 &1660307018
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2135,8 +2135,8 @@ MonoBehaviour:
   jsFunctionBox2: {fileID: 16385315}
   webInfo:
     Url: https://va-demo.chinaeast2.cloudapp.chinacloudapi.cn/?avatar=gululu&chatType=voice&bot=c18902dc-7fb8-4c31-9aa4-47f1b616af9e
-    JsFunction1: javascript:document.getElementById("btnStartVoiceInput").onclick()
-    JsFunction2: javascript:document.getElementById("btnStopVoiceInput").onclick()
+    JsFunction1: javascript:startVoiceInput()
+    JsFunction2: javascript:stopVoiceInput()
   rotateGameObject: {fileID: 2041921936}
   speedX: 0
   speedY: 0.5

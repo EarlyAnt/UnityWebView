@@ -16,10 +16,10 @@ javascript:document.getElementById("btnTest1").onclick()
 https://va-demo.chinaeast2.cloudapp.chinacloudapi.cn/?avatar=gululu&chatType=voice&bot=c18902dc-7fb8-4c31-9aa4-47f1b616af9e
 
 javascript:document.getElementById("btnStartVoiceInput").onclick()
-
 javascript:document.getElementById("btnStopVoiceInput").onclick()
 
-
+javascript:startVoiceInput()
+javascript:stopVoiceInput()
 
 
 
