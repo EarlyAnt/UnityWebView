@@ -8,7 +8,10 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
+import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -52,7 +55,7 @@ public class NextActivity extends Activity {
             }
         });
 
-        btnEndInput = (Button)findViewById(R.id.btnEndInput);
+        btnEndInput = (Button) findViewById(R.id.btnEndInput);
         btnEndInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,16 +85,8 @@ public class NextActivity extends Activity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
+        webSettings.setDomStorageEnabled(true);
 
-        String targetUrl = "";
-        if (Url != null && !Url.isEmpty() && (Url.startsWith("http://") || Url.startsWith("https://"))) {
-            targetUrl = Url;
-        } else {
-            targetUrl = BaseUrl;
-        }
-
-        Toast.makeText(this, "onCreate: open web page: \n" + Url, Toast.LENGTH_LONG).show();
-        webView.loadUrl(targetUrl);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -107,6 +102,27 @@ public class NextActivity extends Activity {
                 //UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
             }
         });
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+            }
+
+            @Override
+            public void onPermissionRequest(PermissionRequest request) {
+                request.grant(request.getResources());//直接同意即可，deny是拒绝
+            }
+        });
+
+        String targetUrl = "";
+        if (Url != null && !Url.isEmpty() && (Url.startsWith("http://") || Url.startsWith("https://"))) {
+            targetUrl = Url;
+        } else {
+            targetUrl = BaseUrl;
+        }
+
+        Toast.makeText(this, "onCreate: open web page: \n" + Url, Toast.LENGTH_LONG).show();
+        webView.loadUrl(targetUrl);
     }
 
     @Override
