@@ -8,13 +8,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.GeolocationPermissions;
+import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -85,8 +84,9 @@ public class NextActivity extends Activity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
-        webSettings.setDomStorageEnabled(true);
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
 
+        /*//不同同时设置WebViewClient和WebChromeClient，重复了
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -101,7 +101,7 @@ public class NextActivity extends Activity {
                 System.out.println("onPageFinished: ");
                 //UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
             }
-        });
+        });*/
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -111,6 +111,12 @@ public class NextActivity extends Activity {
             @Override
             public void onPermissionRequest(PermissionRequest request) {
                 request.grant(request.getResources());//直接同意即可，deny是拒绝
+            }
+
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                System.out.println(String.format("<><NextActivity.onCreate>console message: %s", consoleMessage.message()));
+                return super.onConsoleMessage(consoleMessage);
             }
         });
 
@@ -151,7 +157,7 @@ public class NextActivity extends Activity {
     }
 
     public void evaluateJavaScript(String jsFunction) {
-        System.out.println(String.format("evaluateJavaScript: call js function: %s\nurl: %s", jsFunction, Url));
+        System.out.println(String.format("<><NextActivity.evaluateJavaScript>call js function: %s\nurl: %s", jsFunction, Url));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             webView.evaluateJavascript(jsFunction, null);
         } else {
