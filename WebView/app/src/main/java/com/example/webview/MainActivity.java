@@ -1,10 +1,6 @@
 package com.example.webview;
 
-import android.annotation.SuppressLint;
-
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
     private static final int UI_ANIMATION_DELAY = 300;
 
-    private String url = "http://192.168.2.182:80/index.htm";
+    private String url = "http://192.168.0.104:80/index.htm";
     private String js = "javascript:callWithoutArgs()";
     private WebView webView;
     private CupKeyEventHook mCupKeyEventHook;
