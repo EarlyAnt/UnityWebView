@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WebView</string>
+    <string name="button_start_input">Start Voice Input</string>
+    <string name="button_end_input">Stop Voice Input</string>
 </resources>

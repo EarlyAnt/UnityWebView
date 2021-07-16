@@ -1,98 +1,72 @@
 package com.example.webview;
 
-import android.annotation.SuppressLint;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.webkit.ConsoleMessage;
+import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import static android.view.KeyEvent.KEYCODE_BACK;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class MainActivity extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
+    private static String BaseUrl = "https://www.zhihu.com/";
+    public static String Url = "https://va-demo.chinaeast2.cloudapp.chinacloudapi.cn/?avatar=gululu&chatType=voice&bot=c18902dc-7fb8-4c31-9aa4-47f1b616af9e";
+    public static String JsFunction1 = "javascript:startVoiceInput()";
+    public static String JsFunction2 = "javascript:stopVoiceInput()";
+    private static int CODE_FOR_WRITE_PERMISSION = 1;
+
     private static final boolean AUTO_HIDE = true;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
     private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
 
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-    private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            return false;
-        }
-    };
     private WebView webView;
+    private Button btnStartInput;
+    private Button btnEndInput;
+    private Handler timerHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //requestPermissions();
+
         //全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        webView = (WebView) findViewById(R.id.wv_webview);
+        btnStartInput = (Button) findViewById(R.id.btnStartInput);
+        btnStartInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                evaluateJavaScript(JsFunction1);
+            }
+        });
+
+        btnEndInput = (Button) findViewById(R.id.btnEndInput);
+        btnEndInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                evaluateJavaScript(JsFunction2);
+            }
+        });
+        webView = (WebView) findViewById(R.id.webview);
 
         WebSettings webSettings = webView.getSettings();
         //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
@@ -110,13 +84,15 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
         webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
         //其他细节操作
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //关闭webview中缓存
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT); //关闭webview中缓存
         webSettings.setAllowFileAccess(true); //设置可以访问文件
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
-        webView.loadUrl("https://news.163.com");
-        webView.setWebViewClient(new WebViewClient(){
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
+
+        //不同同时设置WebViewClient和WebChromeClient，重复了
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 //使用WebView加载显示url
@@ -124,19 +100,85 @@ public class MainActivity extends AppCompatActivity {
                 //返回true
                 return true;
             }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                System.out.println("onPageFinished: ");
+                //UnityAndroidBridge.getInstance().sendMessageToUnity("OK");
+            }
         });
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+            }
+
+            @Override
+            public void onPermissionRequest(PermissionRequest request) {
+                request.grant(request.getResources());//直接同意即可，deny是拒绝
+            }
+
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                System.out.println(String.format("<><NextActivity.onCreate>console message: %s", consoleMessage.message()));
+                return super.onConsoleMessage(consoleMessage);
+            }
+        });
+
+        String targetUrl = "";
+        if (Url != null && !Url.isEmpty() && (Url.startsWith("http://") || Url.startsWith("https://"))) {
+            targetUrl = Url;
+        } else {
+            targetUrl = BaseUrl;
+        }
+
+        Toast.makeText(this, "onCreate: open web page: \n" + Url, Toast.LENGTH_LONG).show();
+        webView.loadUrl(targetUrl);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (webView != null) {
+            webView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
     }
+
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KEYCODE_BACK) && webView.canGoBack()) {
-            webView.goBack();
+        if (keyCode == KEYCODE_BACK) {
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
 
+    public void evaluateJavaScript(String jsFunction) {
+        System.out.println(String.format("<><NextActivity.evaluateJavaScript>call js function: %s\nurl: %s", jsFunction, Url));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(jsFunction, null);
+        } else {
+            webView.loadUrl(jsFunction);
+        }
+    }
+
+    private void requestPermissions() {
+        requestPermission(Manifest.permission.INTERNET);
+        requestPermission(Manifest.permission.RECORD_AUDIO);
+        requestPermission(Manifest.permission.MODIFY_AUDIO_SETTINGS);
+        requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        System.out.println("<><MainActivity.requestPermissions>+ + + + +");
+    }
+
+    private void requestPermission(String permission) {
+        int hasWriteStoragePermission = ContextCompat.checkSelfPermission(getApplication(), permission);
+        if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, CODE_FOR_WRITE_PERMISSION);
+        }
     }
 }
